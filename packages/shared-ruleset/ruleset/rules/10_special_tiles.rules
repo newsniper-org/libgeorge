@@ -1,0 +1,72 @@
+% Special tile rules (공유 버전)
+% Requires: data/board.rules, data/params.rules
+
+% ---- Utility tiles: pay government 30만 on arrival ----
+% @phase: economy  @priority: 10
+emit(transfer_money(P, government, Pay, "utility_fee"), T) :-
+  arrive(P, T, Tile, _, _),
+  tile_special(Tile, waterworks),
+  param_utility_tile_fee(Base),
+  effective_fees_amount(P, Base, Pay).
+
+% @phase: economy  @priority: 10
+emit(transfer_money(P, government, Pay, "utility_fee"), T) :-
+  arrive(P, T, Tile, _, _),
+  tile_special(Tile, powerworks),
+  param_utility_tile_fee(Base),
+  effective_fees_amount(P, Base, Pay).
+
+% ---- Hospital: player pays 10만 to market, gov subsidizes 10만 (deduct gov fund) ----
+% @phase: economy  @priority: 20
+emit(transfer_money(P, market, 0, "hospital_fee_free"), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, hospital),
+  hospital_free(P).
+
+% consume once-type hospitalFree modifier(s) when used
+% @phase: economy  @priority: 20
+emit(consume_modifier_once(ModId), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, hospital),
+  modifier(ModId, hospitalFree, player, P, true, once, Rem, _), Rem > 0.
+
+% @phase: economy  @priority: 20
+emit(transfer_money(P, market, Pay, "hospital_fee"), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, hospital),
+  not hospital_free(P),
+  param_hospital_player_pay(Base),
+  effective_fees_amount(P, Base, Pay).
+
+% @phase: economy  @priority: 21
+emit(transfer_money(government, market, PayG, "hospital_subsidy"), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, hospital),
+  param_hospital_gov_pay(PayG),
+  gov_fund(T, Fund), Fund >= PayG.
+
+% ---- Relief fund tile: contribute 60만 into relief pool on arrival ----
+% @phase: economy  @priority: 15
+emit(transfer_money(P, relief_pool, Pay, "relief_contribution"), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, relief_fund),
+  param_relief_tile_fee(Base),
+  effective_fees_amount(P, Base, Pay).
+
+% ---- Jail: landing causes incarceration (max 3 turns) ----
+% @phase: status  @priority: 5
+emit(set_in_jail(P, Max), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, jail), param_jail_max_turns(Max).
+
+% ---- University: 1st visit enroll, 2nd visit graduate ----
+% @phase: status  @priority: 10
+emit(mark_enrolled(P), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, university),
+  not enrolled(P, T), not graduated(P, T).
+
+% @phase: status  @priority: 11
+emit(mark_graduated(P), T) :-
+  arrive(P, T, Tile, _, _), tile_special(Tile, university),
+  enrolled(P, T), not graduated(P, T).
+
+% ---- Transit: no cost (free) ----
+% (No emitted events; purely informational tile)
+
+% ---- Change card tiles ----
+% Landing triggers a draw; the environment supplies drawn_card(P,T,CardId).
+% Card resolution rules are in rules/50_cards.rules.

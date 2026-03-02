@@ -1,0 +1,72 @@
+% Lotto rules (공유 버전)
+% Tile: 2 (lotto)
+% Clarification: payout is accumulated and paid only when the player chooses to stop; failure pays nothing.
+% We model accumulation by tracking a success streak K (1..3). Prize(K) is paid on stop.
+%
+% Inputs:
+%   cmd_play_lotto(P,T,odd|even).    % choose to attempt once at tick T (requires being on lotto tile)
+%   lotto_result(P,T,odd|even).      % outcome for this attempt (provided by environment)
+%   cmd_lotto_continue(P,T,yes|no).  % after a success, choose to continue or stop (at next tick)
+%
+% State (executor-maintained):
+%   lotto_streak(P,T,K).             % K=0..3
+
+% default streak = 0
+lotto_streak0(P, T, K) :- lotto_streak(P, T, K).
+lotto_streak0(P, T, 0) :- player(P), not lotto_streak(P, T, _).
+
+on_lotto_tile(P, T) :- pos(P, T, Tile), tile_special(Tile, lotto).
+
+% Attempt once: pay entry fee once per lotto session (only when streak == 0).
+% @phase: economy @priority: 40
+emit(transfer_money(P, market, Pay, "lotto_entry_fee"), T) :-
+  on_lotto_tile(P, T),
+  cmd_play_lotto(P, T, _),
+  lotto_streak0(P, T, 0),
+  param_lotto_entry_fee(Base),
+  effective_fees_amount(P, Base, Pay).
+
+% Success on attempt when guess matches outcome and streak < 3
+% @phase: status @priority: 40
+emit(set_lotto_streak(P, NewK), T) :-
+  on_lotto_tile(P, T),
+  cmd_play_lotto(P, T, Guess),
+  lotto_result(P, T, Guess),
+  lotto_streak0(P, T, K),
+  K < 3,
+  NewK = add(K, 1).
+
+% Failure clears streak; pays nothing.
+% @phase: status @priority: 41
+emit(set_lotto_streak(P, 0), T) :-
+  on_lotto_tile(P, T),
+  cmd_play_lotto(P, T, Guess),
+  lotto_result(P, T, Out),
+  Guess != Out.
+
+% Stop & cash out: choose no when streak>0.
+% @phase: economy @priority: 42
+emit(transfer_money(market, P, Prize, "lotto_payout"), T) :-
+  on_lotto_tile(P, T),
+  lotto_streak0(P, T, K), K > 0,
+  cmd_lotto_continue(P, T, no),
+  param_lotto_prize(K, Prize).
+
+% Clear streak after cash out.
+% @phase: status @priority: 43
+emit(set_lotto_streak(P, 0), T) :-
+  on_lotto_tile(P, T),
+  lotto_streak0(P, T, K), K > 0,
+  cmd_lotto_continue(P, T, no).
+
+% Auto cash out at streak 3 (max prize).
+% @phase: economy @priority: 44
+emit(transfer_money(market, P, Prize, "lotto_payout_max"), T) :-
+  on_lotto_tile(P, T),
+  lotto_streak0(P, T, 3),
+  param_lotto_prize(3, Prize).
+
+% @phase: status @priority: 45
+emit(set_lotto_streak(P, 0), T) :-
+  on_lotto_tile(P, T),
+  lotto_streak0(P, T, 3).

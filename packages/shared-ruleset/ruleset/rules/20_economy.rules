@@ -1,0 +1,224 @@
+% Economy & city rules (공유 버전)
+% Requires: data/board.rules, data/params.rules, rules/00_api.rules
+% Money unit: man (만원)
+
+% ---- Wage amount ----
+wage_amount(P, T, W) :- graduated(P, T), param_wage_base(B), param_wage_grad_bonus(G), W = add(B, G).
+wage_amount(P, T, B) :- not graduated(P, T), param_wage_base(B).
+
+% ---- Start crossing triggers (walk only) ----
+crossed_start(P, T) :- arrive(P, T, _, walk, true).
+
+% @phase: economy  @priority: 1
+emit(transfer_money(market, P, W, "wage"), T) :- crossed_start(P, T), wage_amount(P, T, W).
+
+% collect start taxes into government fund
+% @phase: economy  @priority: 2
+emit(transfer_money(P, government, Pay, "start_tax_water"), T) :- crossed_start(P, T), param_start_tax_water(Base), effective_fees_amount(P, Base, Pay).
+% @phase: economy  @priority: 2
+emit(transfer_money(P, government, Pay, "start_tax_power"), T) :- crossed_start(P, T), param_start_tax_power(Base), effective_fees_amount(P, Base, Pay).
+% @phase: economy  @priority: 2
+emit(transfer_money(P, government, Pay, "start_tax_health"), T) :- crossed_start(P, T), param_start_tax_health(Base), effective_fees_amount(P, Base, Pay).
+
+% ---- Basic income ----
+% Triggered on start crossing OR on request OR on auto-insolvency (see rehab rules).
+basic_income_trigger(T) :- crossed_start(_, T).
+basic_income_trigger(T) :- cmd_request_basic_income(_, T).
+% basic_income_trigger(T) :- auto_basic_income_trigger(_, T).   % defined in rehab rules
+
+% @phase: economy  @priority: 3
+emit(transfer_money(government, P, Share, "basic_income"), T) :-
+  basic_income_trigger(T),
+  player(P),
+  gov_fund(T, Fund),
+  initial_player_count(N),
+  Share = div(Fund, N).
+% NOTE: remainder = Fund mod N stays in government fund (by design).
+
+% ---- City rent: land rent always to government; house rent to owner if exists ----
+% default: if missing city_houses fact, treat as 0
+city_houses0(City, T, H) :- city_houses(City, T, H).
+city_houses0(City, T, 0) :- tile_city(_, City), not city_houses(City, T, _).
+
+% city has at least N houses
+city_houses_at_least(City, T, N) :- city_houses0(City, T, H), H >= N.
+
+% group_complete_at_least(G,T,N) holds iff every city in group G has >=N houses.
+% Implemented via exact-count on distinct City.
+group_complete_at_least(G, T, N) :-
+  group_city_count(G, Total),
+  exact(Total, (city_in_group(City, G) and city_houses_at_least(City, T, N)), by=[City]).
+
+% multiplier selection (unique via stratified negation)
+land_rent_multiplier(G, T, 6) :- group_complete_at_least(G, T, 3).
+land_rent_multiplier(G, T, 4) :- not group_complete_at_least(G, T, 3), group_complete_at_least(G, T, 2).
+land_rent_multiplier(G, T, 2) :- not group_complete_at_least(G, T, 2), group_complete_at_least(G, T, 1).
+land_rent_multiplier(G, T, 1) :- not group_complete_at_least(G, T, 1).
+
+effective_land_rent(City, T, Rent) :-
+  city_group(City, G),
+  group_base_rent(G, Base),
+  land_rent_multiplier(G, T, M),
+  Rent = mul(Base, M).
+
+% Pay land rent to government on city arrival (regardless of owner)
+% @phase: economy  @priority: 10
+emit(transfer_money(P, government, PayRent, "land_rent"), T) :-
+  arrive(P, T, Tile, _, _), tile_city(Tile, City),
+  effective_land_rent(City, T, BaseRent),
+  effective_rent_amount(P, BaseRent, PayRent).
+
+% House rent: if city has owner != visitor and houses>0, pay owner houses*30
+% @phase: economy  @priority: 11
+emit(transfer_money(P, Owner, Pay, "house_rent"), T) :-
+  arrive(P, T, Tile, _, _), tile_city(Tile, City),
+  city_owner(City, T, Owner), Owner != P,
+  city_houses0(City, T, H), H > 0,
+  param_house_rent_per_house(RPH),
+  Base = mul(H, RPH),
+  effective_rent_amount(P, Base, Pay).
+
+% ---- Building (player choice via cmd_build) ----
+% Max houses per city depends on laps completed: 0->1, 1->2, >=2->3
+max_houses_allowed(P, T, 1) :- laps(P, T, 0).
+max_houses_allowed(P, T, 2) :- laps(P, T, 1).
+max_houses_allowed(P, T, 3) :- laps(P, T, L), L >= 2.
+
+% Upgrade build (city already owned by P)
+% @phase: build  @priority: 1
+emit(transfer_money(P, market, Cost, "build_house"), T) :-
+  cmd_build(P, T, City, Add), Add > 0,
+  city_owner(City, T, P),
+  city_houses0(City, T, Cur),
+  max_houses_allowed(P, T, Max),
+  Cur + Add <= Max,
+  param_house_price(HP),
+  Cost = mul(Add, HP).
+
+% @phase: build  @priority: 2
+emit(add_city_houses(City, Add), T) :-
+  cmd_build(P, T, City, Add), Add > 0,
+  city_owner(City, T, P),
+  city_houses0(City, T, Cur), max_houses_allowed(P, T, Max), Cur + Add <= Max.
+
+% New build (unowned city; Cur=0)
+% @phase: build  @priority: 1
+emit(transfer_money(P, market, Cost, "build_house"), T) :-
+  cmd_build(P, T, City, Add), Add > 0,
+  not city_owner(City, T, _),
+  city_houses0(City, T, 0),
+  max_houses_allowed(P, T, Max),
+  Add <= Max,
+  param_house_price(HP),
+  Cost = mul(Add, HP).
+
+% @phase: build  @priority: 2
+emit(add_city_houses(City, Add), T) :-
+  cmd_build(P, T, City, Add), Add > 0,
+  not city_owner(City, T, _), city_houses0(City, T, 0),
+  max_houses_allowed(P, T, Max), Add <= Max.
+
+% @phase: build  @priority: 3
+emit(set_city_owner(City, P), T) :-
+  cmd_build(P, T, City, Add), Add > 0,
+  not city_owner(City, T, _), city_houses0(City, T, 0).
+
+% ---- Selling houses (player choice via cmd_sell_house) ----
+% Clarification: houses can be sold at full build cost (30만/house) with no ordering constraints.
+% @phase: build  @priority: 20
+emit(transfer_money(market, P, Refund, "sell_house_refund"), T) :-
+  cmd_sell_house(P, T, City, Remove), Remove > 0,
+  city_owner(City, T, P),
+  city_houses0(City, T, Cur), Cur >= Remove,
+  param_house_price(HP),
+  Refund = mul(Remove, HP).
+
+% @phase: build  @priority: 21
+emit(add_city_houses(City, Delta), T) :-
+  cmd_sell_house(P, T, City, Remove), Remove > 0,
+  city_owner(City, T, P),
+  city_houses0(City, T, Cur), Cur >= Remove,
+  Delta = sub(0, Remove).
+
+% If city becomes empty, clear ownership so it becomes buildable as "unowned".
+% @phase: build  @priority: 22
+emit(clear_city_owner(City), T) :-
+  cmd_sell_house(P, T, City, Remove), Remove > 0,
+  city_owner(City, T, P),
+  city_houses0(City, T, Cur), Cur = Remove.
+
+% ---- Game end condition (laps) ----
+player_finished(P, T) :- laps(P, T, L), param_game_end_laps(End), L >= End.
+game_end(T) :- forall(P, player(P) -> player_finished(P, T)).
+% @phase: meta @priority: 1000
+emit(log("game_end"), T) :- game_end(T).
+
+
+% ===========================
+% Modifier-aware fee/rent calc
+% ===========================
+%
+% This ruleset assumes the runtime bridges `GlobalState.modifiers[]` into facts like:
+%   modifier(ModId, Kind, Scope, TargetPlayer, Value, TtlKind, Remaining, Source).
+% where:
+%   Kind ∈ {rentExempt, hospitalFree, feesMultiplier, rentMultiplier, cashMultiplier}
+%   Scope ∈ {global, player}
+%
+% NOTE: Exempt modifiers must be applied *alone* (i.e., if exempt triggers, cost=0 and other multipliers are ignored).
+%
+% For now we expose generic helpers; call sites (rent/fees/hospital) should use these predicates.
+
+% Player-scoped modifiers
+modifier_for_player(P, Kind, Value) :-
+  modifier(_, Kind, player, P, Value, _, _, _).
+
+% Global modifiers
+modifier_global(Kind, Value) :-
+  modifier(_, Kind, global, _, Value, _, _, _).
+
+% Exempt flags
+rent_exempt(P) :- modifier_for_player(P, rentExempt, true).
+hospital_free(P) :- modifier_for_player(P, hospitalFree, true).
+
+% Multipliers (default 1.0); product is approximated by folding pairwise in the engine.
+% If your rules engine lacks product aggregation, implement product in host code and inject as a fact.
+rent_multiplier_term(P, M) :- modifier_for_player(P, rentMultiplier, M).
+fees_multiplier_term(P, M) :- modifier_for_player(P, feesMultiplier, M).
+cash_multiplier_term(P, M) :- modifier_for_player(P, cashMultiplier, M).
+
+% Placeholder aggregates: expected to be provided by host as:
+%   rent_multiplier(P, Mprod).
+%   fees_multiplier(P, Mprod).
+%   cash_multiplier(P, Mprod).
+%
+% Default:
+rent_multiplier(P, 1.0) :- player(P), not rent_multiplier_term(P, _).
+fees_multiplier(P, 1.0) :- player(P), not fees_multiplier_term(P, _).
+cash_multiplier(P, 1.0) :- player(P), not cash_multiplier_term(P, _).
+
+% Effective amounts
+effective_rent_amount(P, Base, Final) :-
+  rent_exempt(P),
+  Final = 0.
+
+effective_rent_amount(P, Base, Final) :-
+  not rent_exempt(P),
+  rent_multiplier(P, M),
+  Final = mul(Base, M).
+
+effective_fees_amount(P, Base, Final) :-
+  fees_multiplier(P, M),
+  Final = mul(Base, M).
+
+
+% consume once-type rentExempt modifier(s) when rent is waived
+% @phase: economy @priority: 10
+emit(consume_modifier_once(ModId), T) :-
+  arrive(P, T, Tile, _, _), tile_city(Tile, _),
+  modifier(ModId, rentExempt, player, P, true, once, Rem, _), Rem > 0.
+
+
+% Decrement turn-based modifiers once per turn tick
+% @phase: meta @priority: 900
+emit(tick_modifiers("end_turn"), T) :- turn(_, T).
+

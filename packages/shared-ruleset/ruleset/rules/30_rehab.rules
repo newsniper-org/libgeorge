@@ -1,0 +1,67 @@
+% Insolvency / relief / rehab rules (공유 버전)
+% This encodes the agreed 'safety net' algorithm:
+%  1) If a player cannot settle debt even after liquidating all assets -> trigger basic income distribution automatically.
+%  2) If still cannot settle -> pay entire relief fund balance to that player.
+%  3) If still cannot settle -> enter rehab (max 3 turns), off-board; all income auto-applied to remaining debt.
+%  4) After 3 rehab turns, any remaining debt is forgiven; return to start and receive wage (laps unchanged).
+
+% ---- Stage facts expected from executor ----
+% These are produced by the executor after applying deterministic economic reduction:
+%   - When a payment is due but cash is insufficient, debt is increased.
+%   - A player may sell any owned houses back to the market at full cost (30만/house) in any order (no constraints).
+%   - "All assets liquidated" means: cash + (house_count_total * 30) compared to debt.
+%
+% insolvency_detected(P, T).             % after full liquidation, still cannot settle (pre basic-income)
+% insolvency_after_basic_income(P, T).   % still insolvent after basic income distribution
+% insolvency_after_relief(P, T).         % still insolvent after relief payout
+% still insolvent after relief payout
+
+% ---- Auto basic income trigger ----
+auto_basic_income_trigger(P, T) :- insolvency_detected(P, T).
+basic_income_trigger(T) :- auto_basic_income_trigger(_, T).
+% @phase: economy @priority: 0
+emit(log("auto_basic_income"), T) :- auto_basic_income_trigger(P, T).
+
+% ---- Relief fund payout (entire balance) ----
+% @phase: economy @priority: 50
+emit(transfer_money(relief_pool, P, Bal, "relief_payout_all"), T) :-
+  insolvency_after_basic_income(P, T),
+  relief_fund(T, Bal), Bal > 0.
+
+% ---- Enter rehab ----
+% @phase: status @priority: 200
+emit(set_in_rehab(P, 0), T) :- insolvency_after_relief(P, T).
+% @phase: status @priority: 201
+emit(set_offboard(P, true), T) :- insolvency_after_relief(P, T).
+% @phase: status @priority: 202
+emit(log("enter_rehab"), T) :- insolvency_after_relief(P, T).
+
+% ---- Rehab turn counting ----
+% Each rehab turn consumes one of the maximum 3 turns.
+% @phase: status @priority: 210
+emit(set_in_rehab(P, New), T) :- turn(P, T), in_rehab(P, T, K), K < 3, New = add(K, 1).
+
+% ---- Rehab exit: debt cleared early ----
+% @phase: status @priority: 300
+emit(clear_rehab(P), T) :- in_rehab(P, T, _), debt(P, T, D), D <= 0.
+% @phase: status @priority: 301
+emit(set_offboard(P, false), T) :- in_rehab(P, T, _), debt(P, T, D), D <= 0.
+% @phase: status @priority: 302
+emit(set_pos(P, 0, rehab_return), T) :- in_rehab(P, T, _), debt(P, T, D), D <= 0.
+% @phase: economy @priority: 303
+emit(transfer_money(market, P, W, "rehab_exit_wage"), T) :- in_rehab(P, T, _), debt(P, T, D), D <= 0, wage_amount(P, T, W).
+
+% ---- Rehab exit: after max turns, forgive remaining debt ----
+% @phase: status @priority: 310
+emit(forgive_debt(P, D, "rehab_forgive"), T) :- in_rehab(P, T, 3), debt(P, T, D), D > 0.
+% @phase: status @priority: 311
+emit(clear_rehab(P), T) :- in_rehab(P, T, 3).
+% @phase: status @priority: 312
+emit(set_offboard(P, false), T) :- in_rehab(P, T, 3).
+% @phase: status @priority: 313
+emit(set_pos(P, 0, rehab_return), T) :- in_rehab(P, T, 3).
+% @phase: economy @priority: 314
+emit(transfer_money(market, P, W, "rehab_exit_wage"), T) :- in_rehab(P, T, 3), wage_amount(P, T, W).
+
+% NOTE: income-in-rehab debt sweep is enforced by executor semantics:
+%   while offboard(P)=true, any incoming money to P is first applied to debt(P) before increasing cash.

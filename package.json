@@ -1,0 +1,17 @@
+{
+  "name": "libgeorge-monorepo",
+  "license": "BSD-2-Clause",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "check": "npm -ws run check",
+    "build": "npm -ws run build",
+    "clean": "rm -rf packages/*/dist packages/shared-ruleset/ruleset_precompiled/*.json"
+  },
+  "devDependencies": {
+    "typescript": "catalog:types",
+    "@types/node": "catalog:types"
+  }
+}

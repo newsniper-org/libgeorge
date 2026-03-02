@@ -1,0 +1,30 @@
+{
+  "name": "@libgeorge/rules-antlr-pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit",
+    "build": "npm run gen:antlr && tsc -p tsconfig.json",
+    "gen:antlr": "antlr4ts -visitor -listener -o src/generated grammar/TwoWorldsRules.g4",
+    "compile:ruleset": "node dist/tools/compileRulesetAntlr.js --ruleset ../../packages/shared-ruleset/ruleset --out ../../packages/shared-ruleset/ruleset_precompiled"
+  },
+  "devDependencies": {
+    "typescript": "catalog:types",
+    "@types/node": "catalog:types",
+    "antlr4ts": "catalog:antlr4",
+    "antlr4ts-cli": "catalog:antlr4"
+  },
+  "dependencies": {
+    "@libgeorge/rulescript-compiler": "workspace:*",
+    "antlr4ts": "catalog:antlr4"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+% Core actors (market/government/relief pool)
+market(market).
+government(government).
+relief_pool(relief_pool).

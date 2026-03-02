@@ -1,0 +1,775 @@
+[
+  {
+    "cardId": "cc_081d3dd83c54",
+    "slug": "건강한식습관",
+    "title": "건강한 식습관",
+    "text": "채식 중심의 건강한 식단으로 건강을 유지하고 있습니다. 병원비 1회 무료입니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "choice",
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "hospital",
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_3f7d4ca0a6c8",
+    "slug": "건물관리",
+    "title": "건물관리",
+    "text": "건물주인은 자신의 재산을 관리할 책임이 있습니다. 소유한 건물에 대해 유지비로 10씩 지불하십시오.(건물 5 채일경우50)",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "pay_cash",
+        "params": {
+          "to": "market",
+          "amount": 10
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_76cabfbc5a4d",
+    "slug": "공과금면제",
+    "title": "공과금 면제",
+    "text": "출발점을 지나거나, 전력/수자원회사 도착 시 공과금을 면제받습니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "choice",
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "fees",
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_1d71aabaf5bf",
+    "slug": "공과금지불",
+    "title": "공과금 지불",
+    "text": "전기요금을 지불하기 위해 전력회사를 방문하십시오.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "move_warp",
+        "params": {
+          "tile": 14,
+          "target": "전력"
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_176162f6a3ef",
+    "slug": "공과금면제78d6a7",
+    "title": "공과금면제",
+    "text": "출발점을 지나거나, 전력/수자원회사 도착 시 공과금을 면제받습니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "choice",
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "fees",
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_992b2aaff97d",
+    "slug": "교통체증",
+    "title": "교통체증",
+    "text": "도시의 교통체증이 심각하여 거주환경이 나빠지고 있습니다. 원하는 도시의 건물 한 채를 제거합니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "remove_building",
+        "params": {
+          "count": 1,
+          "policy": "choice"
+        }
+      }
+    ],
+    "needs_review": true
+  },
+  {
+    "cardId": "cc_223e8d57d117",
+    "slug": "그린뉴딜1",
+    "title": "그린뉴딜 1",
+    "text": "그린뉴딜 정책시행으로 일자리가 늘어나 경기호황 국면으로 접어들었습니다. 출발지로 가서 2배의 급여를 받으세요.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 2
+        }
+      },
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "fees",
+          "value": 2.0,
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_2372fdf07f04",
+    "slug": "그린뉴딜2",
+    "title": "그린뉴딜 2",
+    "text": "그린뉴딜 정책 시행으로 일자리가 늘어나 경기호황 국면으로 접어들었습니다. 1턴 동안 모든 사용료가 1/2 올라갑니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "rent",
+          "value": 0.5,
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_8f6286a64b6d",
+    "slug": "그린뉴딜3",
+    "title": "그린뉴딜 3",
+    "text": "태양광, 풍력에너지 및 전기차 사용으로 공기가 맑아져 거주환경이 개선되었습니다. 사람들이 몰리고 있습니다. 자신의 도시 1곳에 무료로 건물을 1채 더 짓습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "fees",
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_77c12ce96cda",
+    "slug": "기후위기1",
+    "title": "기후위기 1",
+    "text": "기후위기로 인해 가뭄이 심각한 상황입니다. 물가안정을 위해 전면적인 임대료 통제를 실시합니다. 1턴 동안 모든 사용료가 1/2로 떨어집니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "rent",
+          "value": 0.5,
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_475df9d99133",
+    "slug": "기후위기2",
+    "title": "기후위기 2",
+    "text": "기후위기로 인해 심각한 태풍이 발생하였습니다. 해안도시(강릉,포항, 제주,울산,인천,부산)에 있는 건물이한 채씩 파괴됩니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "destroy_building_each",
+        "params": {
+          "cities": [
+            "gangneung",
+            "pohang",
+            "jeju",
+            "ulsan",
+            "incheon",
+            "busan"
+          ],
+          "count_each": 1
+        }
+      }
+    ],
+    "needs_review": true
+  },
+  {
+    "cardId": "cc_ad7f908a79fb",
+    "slug": "내부자거래",
+    "title": "내부자 거래",
+    "text": "윤리규칙을 위반하여 특권금융정보를 공유했습니다! 감옥으로 즉시 이동하십시오.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "move_warp",
+        "params": {
+          "tile": 8,
+          "target": "감옥"
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_d4d11ffecbc7",
+    "slug": "대중교통강화",
+    "title": "대중교통 강화",
+    "text": "초고속열차 하이퍼루프의 시범사업지로 선정되었습니다. 사람들이 급격히 몰리고 있습니다. 자신의 도시 1곳에 무료로 건물 3 채까지 짓습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "fees",
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_36ace42d0be3",
+    "slug": "도시교환",
+    "title": "도시 교환",
+    "text": "게임 참가자 1명에게 파산위기가 왔습니다. 부동산을 교환하여 도움을 줍시다!? 당신과 다른 참가자의 원하는 도시를 교환할 수 있습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "swap_city",
+        "params": {}
+      }
+    ],
+    "needs_review": true
+  },
+  {
+    "cardId": "cc_b8d9a1415cbd",
+    "slug": "마약",
+    "title": "마약",
+    "text": "불법물질을 소유한 것으로 밝혀졌습니다. 감옥으로 이동합니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "move_warp",
+        "params": {
+          "tile": 8,
+          "target": "감옥"
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_a81a422260cb",
+    "slug": "무료티켓",
+    "title": "무료 티켓",
+    "text": "원하는 어디든 이동할 수 있는 기회를 얻었습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "move_warp",
+        "params": {
+          "tile": null,
+          "target": "any"
+        }
+      }
+    ],
+    "needs_review": true
+  },
+  {
+    "cardId": "cc_b598c4fcabbe",
+    "slug": "병원",
+    "title": "병원",
+    "text": "과음/과로/과식으로 건강이 좋지 않습니다. 치료를 위해 병원을 방문하십시오.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "move_warp",
+        "params": {
+          "tile": 24,
+          "target": "병원"
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_b6b479825768",
+    "slug": "보너스지급",
+    "title": "보너스 지급",
+    "text": "회사가 증권시장에 상장되었습니다. 다음 차례 출발지를 지나갈 때 성과급 포함 2배의 급여를 받습니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "forced_immediate",
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 2
+        }
+      },
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "fees",
+          "value": 2.0,
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_cef94bb540f9",
+    "slug": "복권게임",
+    "title": "복권 게임",
+    "text": "복권 게임 시 당첨금 2배가 됩니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "choice",
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "fees",
+          "value": 2.0,
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_8d5ae154a2ed",
+    "slug": "복권당첨",
+    "title": "복권당첨",
+    "text": "복권 당첨을 축하드립니다! 100 을받습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 100
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_092aec5d6a11",
+    "slug": "부모님께효도",
+    "title": "부모님께 효도",
+    "text": "부모님이 중병에 걸렸습니다. 병원으로 이동합니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "move_warp",
+        "params": {
+          "tile": 24,
+          "target": "병원"
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_18d8d19b7937",
+    "slug": "연말정산",
+    "title": "연말정산",
+    "text": "초과 납부한 세금을 돌려받습니다. 소득세 100을 환급받습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "pay_cash",
+        "params": {
+          "to": "market",
+          "amount": 100
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_f107dba01d00",
+    "slug": "왕자와거지",
+    "title": "왕자와 거지",
+    "text": "운명의 장난! 알고 보니 왕자(거지)! 주사위를 굴려 나온 숫자만큼 시계방향에 있는 참가자와 모든 것을 교환하십시오.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "swap_with_offset",
+        "params": {}
+      }
+    ],
+    "needs_review": true
+  },
+  {
+    "cardId": "cc_b46a8989ea17",
+    "slug": "인권변호사",
+    "title": "인권 변호사",
+    "text": "인권변호사를 통해 즉시 감옥에서 석방됩니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "choice",
+    "copies": 2,
+    "effects": [
+      {
+        "kind": "jail_release",
+        "params": {}
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_6c810bde052d",
+    "slug": "임대료감면",
+    "title": "임대료 감면",
+    "text": "경기부양을 위해 소비 진작 할인쿠폰이 발행되었습니다. 토지/건물 사용료 50% 감면받습니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "choice",
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 50
+        }
+      },
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "rent",
+          "value": 0.5,
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_7908ceb785e8",
+    "slug": "임대료면제",
+    "title": "임대료 면제",
+    "text": "에어B&D의 특별회원이 되었습니다. 토지/건물사용료를 1회 면제받습니다.(사용 후 카드더미로)",
+    "mode": "hold",
+    "hold_timing": "choice",
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 1
+        }
+      },
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "rent",
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_8e941ff4812a",
+    "slug": "임대료통제",
+    "title": "임대료 통제",
+    "text": "대도시(서울,부산,인천,대구,대전,광주, 수원,울산) 부동산투기가 심각합니다. 전면적인 임대료 통제정책이 시행됩니다. 1턴 동안 대도시의 임대료가 면제됩니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "rent",
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_3493e0bb6ae0",
+    "slug": "장학금",
+    "title": "장학금",
+    "text": "특별한 당신, 장학금을 받기까지 참 열심히 살았습니다. 수고 많았습니다. 대학(원)으로갑니다. 수업료 무료",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "exempt",
+        "params": {
+          "scope": "fees",
+          "ttl": {
+            "kind": "once",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_547113fe3b6b",
+    "slug": "주경야독",
+    "title": "주경야독",
+    "text": "밤잠을 쪼개가며 열심히 일한 당신, 학위 취득에 성공하였습니다. 다음 차례부터 급여가 100 올라갑니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "wage_bonus",
+        "params": {
+          "delta": 100
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_125e5adc3220",
+    "slug": "주식시장급증",
+    "title": "주식시장 급증",
+    "text": "보유한 주식의 움직임이 심상치 않습니다! 현재의 현금자산이 2배가 됩니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "fees",
+          "value": 2.0,
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_45b9b1dd97fa",
+    "slug": "주식시장하락",
+    "title": "주식시장 하락",
+    "text": "보유한 주식의 움직임이 심상치 않습니다! 현금자산의 절반을 잃습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "cash_multiplier",
+        "params": {
+          "value": 0.5
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_5ef81e495590",
+    "slug": "지방소멸",
+    "title": "지방소멸",
+    "text": "저출산으로 인해 인구가 급격히 감소하고 있습니다. 원하는 동일 색깔의 도시에 건물 1채씩 없앱니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "remove_building_group_choice",
+        "params": {
+          "count_each": 1
+        }
+      }
+    ],
+    "needs_review": true
+  },
+  {
+    "cardId": "cc_e58b002acb49",
+    "slug": "축출산",
+    "title": "축 출산",
+    "text": "셋째를 낳은 당신 수고하셨습니다! 다둥이 출산축하금 200을 받습니다.(다자녀)",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 200
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_2f6efca4e197",
+    "slug": "축출산5d0567",
+    "title": "축 출산",
+    "text": "축하합니다. 딸입니다! 출산축하금100 을 받습니다.(딸)",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 100
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_aec46bbbe4a3",
+    "slug": "축출산b08a78",
+    "title": "축 출산",
+    "text": "축하합니다. 아들입니다! 출산장려금 100을 받습니다.(아들)",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 100
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_51d67e69b49a",
+    "slug": "코로나바이러스",
+    "title": "코로나 바이러스",
+    "text": "바이러스 확산으로 인해 경기가 침체되고 있습니다. 이번 차례에 모든 사용료가 1/2로 떨어집니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "multiplier",
+        "params": {
+          "scope": "rent",
+          "value": 0.5,
+          "ttl": {
+            "kind": "turns",
+            "n": 1
+          }
+        }
+      }
+    ],
+    "needs_review": false
+  },
+  {
+    "cardId": "cc_da4772d504f9",
+    "slug": "후원금",
+    "title": "후원금",
+    "text": "결혼 축하합니다. 모두에게 각 40씩 받습니다.",
+    "mode": "instant",
+    "hold_timing": null,
+    "copies": 1,
+    "effects": [
+      {
+        "kind": "grant_cash",
+        "params": {
+          "amount": 40
+        }
+      }
+    ],
+    "needs_review": false
+  }
+]

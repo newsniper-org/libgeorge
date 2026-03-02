@@ -1,0 +1,44 @@
+% Change cards runtime semantics (공유 버전)
+% Requires: data/cards_shared.rules, data/board.rules
+
+% When landing on a change_card tile, the environment supplies drawn_card(P,T,CardId).
+% The ruleset classifies cards as:
+%   - instant: resolve immediately, then discard to bottom of deck
+%   - hold: keep in hand until used, then discard
+%   - hold + forced_immediate: must be used immediately on draw (then discard)
+
+% @phase: cards @priority: 1
+emit(log("card_drawn"), T) :- drawn_card(P, T, CardId), card_deck(CardId, change_cards_shared).
+
+% Immediate cards
+% @phase: cards @priority: 2
+emit(resolve_card(P, CardId), T) :-
+  drawn_card(P, T, CardId), card_mode(CardId, instant).
+
+% Held cards (choice)
+% @phase: cards @priority: 2
+emit(add_card_to_hand(P, CardId), T) :-
+  drawn_card(P, T, CardId), card_mode(CardId, hold), card_hold_timing(CardId, choice).
+
+% Held cards (forced immediate)
+% @phase: cards @priority: 2
+emit(resolve_card(P, CardId), T) :-
+  drawn_card(P, T, CardId), card_mode(CardId, hold), card_hold_timing(CardId, forced_immediate).
+% @phase: cards @priority: 3
+emit(remove_card_from_hand(P, CardId), T) :-
+  drawn_card(P, T, CardId), card_mode(CardId, hold), card_hold_timing(CardId, forced_immediate).
+
+% Using a held card (player choice)
+% @phase: cards @priority: 10
+emit(resolve_card(P, CardId), T) :- cmd_use_card(P, T, CardId).
+% @phase: cards @priority: 11
+emit(remove_card_from_hand(P, CardId), T) :- cmd_use_card(P, T, CardId).
+
+% TODO: Effect mapping
+% The concrete effects of resolve_card(P,CardId) should be implemented in a separate file,
+% typically by matching card_title/card_text to structured effects.
+% You already fixed policy:
+%   - warp moves do NOT trigger start effects
+%   - exemption card acts alone
+%   - discounts/multipliers stack by multiplication
+

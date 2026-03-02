@@ -1,0 +1,17 @@
+{
+  "name": "@libgeorge/shared-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test:smoke": "node dist/demo/smoke.js",
+    "test:integration_smoke": "node dist/demo/integration_smoke.js",
+    "compile:ruleset": "node dist/tools/compileRuleset.js --ruleset ./ruleset --out ./ruleset_precompiled/shared_ruleset.ir.json"
+  },
+  "devDependencies": {
+    "typescript": "catalog:types",
+    "@types/node": "catalog:types"
+  }
+}

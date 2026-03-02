@@ -1,0 +1,48 @@
+% Game parameters (공유 버전) - money unit: man (만원)
+const_money_unit(man).
+
+% initial cash per player (만원): 400만
+param_initial_cash(400).
+
+% wage (만원)
+param_wage_base(200).
+param_wage_grad_bonus(100).
+
+% house economics (만원)
+param_house_price(30).
+param_house_rent_per_house(30).
+
+% start taxes (paid to government on crossing start, 만원)
+param_start_tax_water(30).
+param_start_tax_power(30).
+param_start_tax_health(10).
+param_start_tax_total(70) :- param_start_tax_water(A), param_start_tax_power(B), param_start_tax_health(C), 70 = A + B + C.
+
+% utility tile fee (waterworks/powerworks) (만원)
+param_utility_tile_fee(30).
+
+% hospital (만원): total 20만, player pays 10만 to market, gov subsidizes 10만 (deduct gov fund)
+param_hospital_player_pay(10).
+param_hospital_gov_pay(10).
+
+% relief fund tile contribution (만원)
+param_relief_tile_fee(60).
+
+% jail
+param_jail_escape_fee(40).
+param_jail_max_turns(3).
+
+% rehab
+param_rehab_max_turns(3).
+
+% lotto (만원)
+param_lotto_entry_fee(20).
+param_lotto_prize(1, 50).
+param_lotto_prize(2, 100).
+param_lotto_prize(3, 200).
+
+% game end condition: each player reaches 4th crossing/arrival at start.
+param_game_end_laps(4).
+
+% required input: initial_player_count(N).  (N = 전체 시작 인원 수)
+% Example: initial_player_count(4).

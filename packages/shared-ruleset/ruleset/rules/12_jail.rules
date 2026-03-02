@@ -1,0 +1,24 @@
+% Jail rules (공유 버전)
+% Clarification (from user): double escape ends turn immediately; no extra turn; movement starts next turn.
+
+% Pay escape fee (40만) -> escape immediately (movement can proceed this turn)
+% @phase: status @priority: 100
+emit(transfer_money(P, market, Fee, "jail_escape_fee"), T) :- cmd_pay_jail_escape(P, T), in_jail(P, T, _), param_jail_escape_fee(Fee).
+% @phase: status @priority: 101
+emit(clear_jail(P), T) :- cmd_pay_jail_escape(P, T), in_jail(P, T, _).
+
+% Double rolled while in jail -> escape, but turn ends immediately (no movement)
+% @phase: status @priority: 110
+emit(clear_jail(P), T) :- in_jail(P, T, _), roll(P, T, D1, D2), D1 = D2.
+% @phase: status @priority: 111
+emit(log("jail_escape_double_end_turn"), T) :- in_jail(P, T, _), roll(P, T, D1, D2), D1 = D2.
+
+% Failed attempt (non-double) consumes a jail turn
+% @phase: status @priority: 120
+emit(set_in_jail(P, New), T) :- in_jail(P, T, K), roll(P, T, D1, D2), D1 != D2, K > 1, New = sub(K, 1).
+
+% After the last jail turn is consumed (K==1, non-double), release; movement next turn
+% @phase: status @priority: 121
+emit(clear_jail(P), T) :- in_jail(P, T, 1), roll(P, T, D1, D2), D1 != D2.
+% @phase: status @priority: 122
+emit(log("jail_release_after_max_turns"), T) :- in_jail(P, T, 1), roll(P, T, D1, D2), D1 != D2.

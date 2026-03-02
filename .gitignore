@@ -1,0 +1,4 @@
+**/node_modules/
+packages/shared-ruleset/ruleset_precompiled/*
+!packages/shared-ruleset/ruleset_precompiled/README.md
+**/dist/

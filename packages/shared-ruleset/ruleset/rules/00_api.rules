@@ -1,0 +1,88 @@
+% API / Interface predicates for simulator+AI integration
+% This file documents *inputs* that the engine/environment must provide, and *events* that rules emit.
+% The DSL is Datalog-like; time variable is T (discrete tick/turn-step).
+
+% ---- Entities ----
+% player(P).                         % declare player ids
+% initial_player_count(N).           % fixed N (start players)
+% market(market). government(government). relief_pool(relief_pool).
+
+% ---- State facts (provided & updated by executor) ----
+% pos(P, T, Tile).
+% laps(P, T, LapsCompleted).
+% cash(P, T, AmountMan).
+% debt(P, T, AmountMan).
+% gov_fund(T, AmountMan).
+% relief_fund(T, AmountMan).
+% market_fund(T, AmountMan).
+% graduated(P, T).          % once true stays true
+% enrolled(P, T).           % university enrollment flag
+% city_owner(City, T, Owner).
+% city_houses(City, T, Houses).   % 0..3
+% in_jail(P, T, TurnsLeft).
+% in_rehab(P, T, TurnsUsed).
+% lotto_streak(P, T, K).        % K=0..3 current success streak while playing lotto on tile 2
+% offboard(P, T).
+
+% ---- Turn/movement inputs ----
+% turn(P, T).                      % it's P's turn at tick T
+% roll(P, T, D1, D2).              % dice result for this turn-step
+% arrive(P, T, Tile, Mode, CrossedStart).
+%   Mode ∈ {walk, warp, rehab_return}.  warp does NOT trigger start-crossing effects.
+%   CrossedStart ∈ {true,false} only meaningful for Mode=walk.
+
+% ---- Player choice inputs ----
+% cmd_build(P, T, City, AddHouses).
+% cmd_sell_house(P, T, City, RemoveHouses).  % sell houses back to market (no constraints)
+% cmd_request_basic_income(P, T).         % can happen at any time
+% cmd_pay_jail_escape(P, T).
+% cmd_play_lotto(P, T, GuessOddEven).      % GuessOddEven ∈ {odd, even}
+% lotto_result(P, T, OddEven).            % environment-provided outcome for this lotto attempt
+% cmd_lotto_continue(P, T, yes|no).        % OPTIONAL (see TODO in lotto rules)
+% cmd_use_card(P, T, CardId).              % for held cards
+
+% ---- Deck manager inputs ----
+% drawn_card(P, T, CardId).               % when landing on change_card tile; environment supplies draw result
+
+% ---- Emitted events (to be executed by engine) ----
+% emit(transfer_money(From, To, AmountMan, Reason), T).
+% emit(set_pos(P, Tile, Mode), T).
+% emit(set_in_jail(P, Turns), T).
+% emit(clear_jail(P), T).
+% emit(set_in_rehab(P, TurnsUsed), T).
+% emit(clear_rehab(P), T).
+% emit(set_offboard(P, true|false), T).
+% emit(add_laps(P, Delta), T).
+% emit(add_debt(P, AmountMan, Reason), T).
+% emit(pay_debt(P, AmountMan, Reason), T).
+% emit(forgive_debt(P, AmountMan, Reason), T).
+% emit(set_city_owner(City, Owner), T).
+% emit(clear_city_owner(City), T).
+% emit(add_city_houses(City, Delta), T).
+% emit(mark_enrolled(P), T).
+% emit(mark_graduated(P), T).
+% emit(set_lotto_streak(P, K), T).
+% emit(add_card_to_hand(P, CardId), T).
+% emit(remove_card_from_hand(P, CardId), T).
+% emit(resolve_card(P, CardId), T).   % execute card effects (see TODO mapping)
+% emit(log(Message), T).
+
+% ---- NOTE ----
+% This ruleset focuses on rule semantics. The executor is responsible for applying events to state,
+% including insufficient-cash handling (create debt), optional asset liquidation, and deterministic ordering via phase/priority.
+% Clarified policies:
+%  - Basic income remainder (Fund mod N) remains in government fund.
+%  - Hospital gov subsidy (10만) is skipped if gov_fund is insufficient.
+%  - Houses can be sold back at full build cost (30만/house) with no ordering constraints.
+%  - In rehab/offboard, any incoming money to the player is first applied to remaining debt.
+
+% ---- Modifier facts (bridged from runtime) ----
+% modifier(ModId, Kind, Scope, TargetPlayer, Value, TtlKind, Remaining, Source).
+% modifier_once(ModId, Kind, Scope, TargetPlayer).
+% rent_multiplier(P, Mprod). fees_multiplier(P, Mprod). cash_multiplier(P, Mprod).
+
+% ---- Modifier events ----
+% emit(add_modifier(Mod), T).
+% emit(consume_modifier_once(ModId), T).
+% emit(tick_modifiers(Reason), T).
+% emit(clear_modifiers(Predicate), T).

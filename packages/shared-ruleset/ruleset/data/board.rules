@@ -1,0 +1,109 @@
+% Auto-generated board data for <두 개의 세상, 공유와 독점> (공유 버전)
+% Money unit: man (만원 단위)
+
+const_money_unit(man).
+tile_count(32).
+start_tile(0).
+corner(0). corner(8). corner(16). corner(24).
+
+% group_base_rent(GroupId, RentMan).  RentMan in 만원 (k * 10 == k*100000원)
+group_base_rent(1, 10).
+group_base_rent(2, 20).
+group_base_rent(3, 30).
+group_base_rent(4, 40).
+group_base_rent(5, 50).
+group_base_rent(6, 60).
+group_base_rent(7, 70).
+group_base_rent(8, 80).
+
+% tile_city(TileIdx, CityId).
+tile_city(1, mokpo).
+tile_city(3, gangneung).
+tile_city(5, cheonan).
+tile_city(6, jeonju).
+tile_city(7, pohang).
+tile_city(10, chuncheon).
+tile_city(11, cheongju).
+tile_city(13, seongnam).
+tile_city(15, changwon).
+tile_city(17, jeju).
+tile_city(18, goyang).
+tile_city(19, ulsan).
+tile_city(21, suwon).
+tile_city(22, gwangju).
+tile_city(23, daejeon).
+tile_city(26, daegu).
+tile_city(27, incheon).
+tile_city(29, busan).
+tile_city(31, seoul).
+
+% city_group(CityId, GroupId).
+city_group(mokpo, 1).
+city_group(gangneung, 1).
+city_group(cheonan, 2).
+city_group(jeonju, 2).
+city_group(pohang, 2).
+city_group(chuncheon, 3).
+city_group(cheongju, 3).
+city_group(seongnam, 4).
+city_group(changwon, 4).
+city_group(jeju, 5).
+city_group(goyang, 5).
+city_group(ulsan, 5).
+city_group(suwon, 6).
+city_group(gwangju, 6).
+city_group(daejeon, 6).
+city_group(daegu, 7).
+city_group(incheon, 7).
+city_group(busan, 8).
+city_group(seoul, 8).
+
+% group_city_count(GroupId, Count).  (precomputed)
+group_city_count(1, 2).
+group_city_count(2, 3).
+group_city_count(3, 2).
+group_city_count(4, 2).
+group_city_count(5, 3).
+group_city_count(6, 3).
+group_city_count(7, 2).
+group_city_count(8, 2).
+
+% city_in_group(CityId, GroupId).
+city_in_group(mokpo, 1).
+city_in_group(gangneung, 1).
+city_in_group(cheonan, 2).
+city_in_group(jeonju, 2).
+city_in_group(pohang, 2).
+city_in_group(chuncheon, 3).
+city_in_group(cheongju, 3).
+city_in_group(seongnam, 4).
+city_in_group(changwon, 4).
+city_in_group(jeju, 5).
+city_in_group(goyang, 5).
+city_in_group(ulsan, 5).
+city_in_group(suwon, 6).
+city_in_group(gwangju, 6).
+city_in_group(daejeon, 6).
+city_in_group(daegu, 7).
+city_in_group(incheon, 7).
+city_in_group(busan, 8).
+city_in_group(seoul, 8).
+
+% base_land_rent(CityId, RentMan). derived via group_base_rent; kept as explicit rule for convenience.
+base_land_rent(City, Rent) :- city_group(City, G), group_base_rent(G, Rent).
+
+% tile_special(TileIdx, Kind).
+tile_special(2, lotto).
+tile_special(4, waterworks).
+tile_special(8, jail).
+tile_special(9, transit).
+tile_special(12, change_card).
+tile_special(14, powerworks).
+tile_special(16, university).
+tile_special(20, change_card).
+tile_special(24, hospital).
+tile_special(25, transit).
+tile_special(28, change_card).
+tile_special(30, relief_fund).
+
+% NOTE(UI): city_group is an unsigned integer key; UI maps group_id -> display color.

@@ -1,0 +1,49 @@
+% Card concrete effect mapping (auto-generated)
+% Params are JSON (deterministic: sorted keys)
+card_effect(cc_081d3dd83c54, exempt, "{"scope": "hospital", "ttl": {"kind": "once", "n": 1}}").
+card_effect(cc_3f7d4ca0a6c8, pay_cash, "{"amount": 10, "to": "market"}").
+card_effect(cc_76cabfbc5a4d, exempt, "{"scope": "fees", "ttl": {"kind": "once", "n": 1}}").
+card_effect(cc_1d71aabaf5bf, move_warp, "{"target": "전력", "tile": 14}").
+card_effect(cc_176162f6a3ef, exempt, "{"scope": "fees", "ttl": {"kind": "once", "n": 1}}").
+card_needs_review(cc_992b2aaff97d).
+card_effect(cc_992b2aaff97d, remove_building, "{"count": 1, "policy": "choice"}").
+card_effect(cc_223e8d57d117, grant_cash, "{"amount": 2}").
+card_effect(cc_223e8d57d117, multiplier, "{"scope": "fees", "ttl": {"kind": "turns", "n": 1}, "value": 2.0}").
+card_effect(cc_2372fdf07f04, multiplier, "{"scope": "rent", "ttl": {"kind": "turns", "n": 1}, "value": 0.5}").
+card_effect(cc_8f6286a64b6d, exempt, "{"scope": "fees", "ttl": {"kind": "once", "n": 1}}").
+card_effect(cc_77c12ce96cda, multiplier, "{"scope": "rent", "ttl": {"kind": "turns", "n": 1}, "value": 0.5}").
+card_needs_review(cc_475df9d99133).
+card_effect(cc_475df9d99133, destroy_building_each, "{"cities": ["gangneung", "pohang", "jeju", "ulsan", "incheon", "busan"], "count_each": 1}").
+card_effect(cc_ad7f908a79fb, move_warp, "{"target": "감옥", "tile": 8}").
+card_effect(cc_d4d11ffecbc7, exempt, "{"scope": "fees", "ttl": {"kind": "once", "n": 1}}").
+card_needs_review(cc_36ace42d0be3).
+card_effect(cc_36ace42d0be3, swap_city, "{}").
+card_effect(cc_b8d9a1415cbd, move_warp, "{"target": "감옥", "tile": 8}").
+card_needs_review(cc_a81a422260cb).
+card_effect(cc_a81a422260cb, move_warp, "{"target": "any", "tile": null}").
+card_effect(cc_b598c4fcabbe, move_warp, "{"target": "병원", "tile": 24}").
+card_effect(cc_b6b479825768, grant_cash, "{"amount": 2}").
+card_effect(cc_b6b479825768, multiplier, "{"scope": "fees", "ttl": {"kind": "turns", "n": 1}, "value": 2.0}").
+card_effect(cc_cef94bb540f9, multiplier, "{"scope": "fees", "ttl": {"kind": "turns", "n": 1}, "value": 2.0}").
+card_effect(cc_8d5ae154a2ed, grant_cash, "{"amount": 100}").
+card_effect(cc_092aec5d6a11, move_warp, "{"target": "병원", "tile": 24}").
+card_effect(cc_18d8d19b7937, pay_cash, "{"amount": 100, "to": "market"}").
+card_needs_review(cc_f107dba01d00).
+card_effect(cc_f107dba01d00, swap_with_offset, "{}").
+card_effect(cc_b46a8989ea17, jail_release, "{}").
+card_effect(cc_6c810bde052d, grant_cash, "{"amount": 50}").
+card_effect(cc_6c810bde052d, multiplier, "{"scope": "rent", "ttl": {"kind": "once", "n": 1}, "value": 0.5}").
+card_effect(cc_7908ceb785e8, grant_cash, "{"amount": 1}").
+card_effect(cc_7908ceb785e8, exempt, "{"scope": "rent", "ttl": {"kind": "once", "n": 1}}").
+card_effect(cc_8e941ff4812a, exempt, "{"scope": "rent", "ttl": {"kind": "turns", "n": 1}}").
+card_effect(cc_3493e0bb6ae0, exempt, "{"scope": "fees", "ttl": {"kind": "once", "n": 1}}").
+card_effect(cc_547113fe3b6b, wage_bonus, "{"delta": 100}").
+card_effect(cc_125e5adc3220, multiplier, "{"scope": "fees", "ttl": {"kind": "turns", "n": 1}, "value": 2.0}").
+card_effect(cc_45b9b1dd97fa, cash_multiplier, "{"value": 0.5}").
+card_needs_review(cc_5ef81e495590).
+card_effect(cc_5ef81e495590, remove_building_group_choice, "{"count_each": 1}").
+card_effect(cc_e58b002acb49, grant_cash, "{"amount": 200}").
+card_effect(cc_2f6efca4e197, grant_cash, "{"amount": 100}").
+card_effect(cc_aec46bbbe4a3, grant_cash, "{"amount": 100}").
+card_effect(cc_51d67e69b49a, multiplier, "{"scope": "rent", "ttl": {"kind": "turns", "n": 1}, "value": 0.5}").
+card_effect(cc_da4772d504f9, grant_cash, "{"amount": 40}").
