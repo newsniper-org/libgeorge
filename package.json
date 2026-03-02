@@ -1,5 +1,6 @@
 {
   "name": "libgeorge-monorepo",
+  "private": true,
   "license": "BSD-2-Clause",
   "workspaces": [
     "packages/*"
