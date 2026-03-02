@@ -1,4 +1,4 @@
-# Two Worlds — Unified Monorepo
+# libgeorge — Unified Monorepo
 
 Packages:
 
